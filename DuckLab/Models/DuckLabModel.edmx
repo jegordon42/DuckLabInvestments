@@ -1,0 +1,464 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ducklabdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Company">
+          <Key>
+            <PropertyRef Name="companyID" />
+          </Key>
+          <Property Name="companyID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="companyName" Type="varchar" MaxLength="200" />
+          <Property Name="companySymbol" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="CompanyStock">
+          <Key>
+            <PropertyRef Name="companyStockId" />
+          </Key>
+          <Property Name="companyStockId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="companyId" Type="int" Nullable="false" />
+          <Property Name="stockTime" Type="datetime" />
+          <Property Name="stockPrice" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="isOpen" Type="bit" />
+        </EntityType>
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="gameId" />
+          </Key>
+          <Property Name="gameId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="gameTypeId" Type="int" />
+          <Property Name="gameName" Type="varchar" MaxLength="200" />
+          <Property Name="adminId" Type="int" Nullable="false" />
+          <Property Name="gameStatus" Type="nchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="GameUser">
+          <Key>
+            <PropertyRef Name="gameUserId" />
+          </Key>
+          <Property Name="gameUserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="gameId" Type="int" Nullable="false" />
+          <Property Name="userId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="firstName" Type="varchar" MaxLength="50" />
+          <Property Name="lastName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="UserStock">
+          <Key>
+            <PropertyRef Name="userStockId" />
+          </Key>
+          <Property Name="userStockId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userId" Type="int" Nullable="false" />
+          <Property Name="gameId" Type="int" Nullable="false" />
+          <Property Name="companyId" Type="int" Nullable="false" />
+          <Property Name="timePurchased" Type="datetime" />
+        </EntityType>
+        <Association Name="FK_CompanyStock_Company">
+          <End Role="Company" Type="Self.Company" Multiplicity="1" />
+          <End Role="CompanyStock" Type="Self.CompanyStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Company">
+              <PropertyRef Name="companyID" />
+            </Principal>
+            <Dependent Role="CompanyStock">
+              <PropertyRef Name="companyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Game_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Game" Type="Self.Game" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="adminId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GameUser_Game">
+          <End Role="Game" Type="Self.Game" Multiplicity="1" />
+          <End Role="GameUser" Type="Self.GameUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="gameId" />
+            </Principal>
+            <Dependent Role="GameUser">
+              <PropertyRef Name="gameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GameUser_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="GameUser" Type="Self.GameUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="GameUser">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserStock_Company">
+          <End Role="Company" Type="Self.Company" Multiplicity="1" />
+          <End Role="UserStock" Type="Self.UserStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Company">
+              <PropertyRef Name="companyID" />
+            </Principal>
+            <Dependent Role="UserStock">
+              <PropertyRef Name="companyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserStock_Game">
+          <End Role="Game" Type="Self.Game" Multiplicity="1" />
+          <End Role="UserStock" Type="Self.UserStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="gameId" />
+            </Principal>
+            <Dependent Role="UserStock">
+              <PropertyRef Name="gameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserStock_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="UserStock" Type="Self.UserStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="UserStock">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ducklabdbModelStoreContainer">
+          <EntitySet Name="Company" EntityType="Self.Company" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CompanyStock" EntityType="Self.CompanyStock" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Game" EntityType="Self.Game" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GameUser" EntityType="Self.GameUser" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserStock" EntityType="Self.UserStock" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_CompanyStock_Company" Association="Self.FK_CompanyStock_Company">
+            <End Role="Company" EntitySet="Company" />
+            <End Role="CompanyStock" EntitySet="CompanyStock" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Game_User" Association="Self.FK_Game_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Game" EntitySet="Game" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GameUser_Game" Association="Self.FK_GameUser_Game">
+            <End Role="Game" EntitySet="Game" />
+            <End Role="GameUser" EntitySet="GameUser" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GameUser_User" Association="Self.FK_GameUser_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="GameUser" EntitySet="GameUser" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserStock_Company" Association="Self.FK_UserStock_Company">
+            <End Role="Company" EntitySet="Company" />
+            <End Role="UserStock" EntitySet="UserStock" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserStock_Game" Association="Self.FK_UserStock_Game">
+            <End Role="Game" EntitySet="Game" />
+            <End Role="UserStock" EntitySet="UserStock" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserStock_User" Association="Self.FK_UserStock_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="UserStock" EntitySet="UserStock" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ducklabdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Company">
+          <Key>
+            <PropertyRef Name="companyID" />
+          </Key>
+          <Property Name="companyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="companyName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="companySymbol" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="CompanyStocks" Relationship="ducklabdbModel.FK_CompanyStock_Company" FromRole="Company" ToRole="CompanyStock" />
+          <NavigationProperty Name="UserStocks" Relationship="ducklabdbModel.FK_UserStock_Company" FromRole="Company" ToRole="UserStock" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="firstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="lastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Games" Relationship="ducklabdbModel.FK_Game_User" FromRole="User" ToRole="Game" />
+          <NavigationProperty Name="GameUsers" Relationship="ducklabdbModel.FK_GameUser_User" FromRole="User" ToRole="GameUser" />
+          <NavigationProperty Name="UserStocks" Relationship="ducklabdbModel.FK_UserStock_User" FromRole="User" ToRole="UserStock" />
+        </EntityType>
+        <EntityContainer Name="ducklabdbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Companies" EntityType="Self.Company" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="CompanyStocks" EntityType="ducklabdbModel.CompanyStock" />
+          <EntitySet Name="Games" EntityType="ducklabdbModel.Game" />
+          <EntitySet Name="GameUsers" EntityType="ducklabdbModel.GameUser" />
+          <EntitySet Name="UserStocks" EntityType="ducklabdbModel.UserStock" />
+          <AssociationSet Name="FK_CompanyStock_Company" Association="ducklabdbModel.FK_CompanyStock_Company">
+            <End Role="Company" EntitySet="Companies" />
+            <End Role="CompanyStock" EntitySet="CompanyStocks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserStock_Company" Association="ducklabdbModel.FK_UserStock_Company">
+            <End Role="Company" EntitySet="Companies" />
+            <End Role="UserStock" EntitySet="UserStocks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Game_User" Association="ducklabdbModel.FK_Game_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Game" EntitySet="Games" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GameUser_Game" Association="ducklabdbModel.FK_GameUser_Game">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="GameUser" EntitySet="GameUsers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserStock_Game" Association="ducklabdbModel.FK_UserStock_Game">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="UserStock" EntitySet="UserStocks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GameUser_User" Association="ducklabdbModel.FK_GameUser_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="GameUser" EntitySet="GameUsers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserStock_User" Association="ducklabdbModel.FK_UserStock_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserStock" EntitySet="UserStocks" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="CompanyStock">
+          <Key>
+            <PropertyRef Name="companyStockId" />
+          </Key>
+          <Property Name="companyStockId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="companyId" Type="Int32" Nullable="false" />
+          <Property Name="stockTime" Type="DateTime" Precision="3" />
+          <Property Name="stockPrice" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="isOpen" Type="Boolean" />
+          <NavigationProperty Name="Company" Relationship="ducklabdbModel.FK_CompanyStock_Company" FromRole="CompanyStock" ToRole="Company" />
+        </EntityType>
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="gameId" />
+          </Key>
+          <Property Name="gameId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="gameTypeId" Type="Int32" />
+          <Property Name="gameName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="adminId" Type="Int32" Nullable="false" />
+          <Property Name="gameStatus" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="ducklabdbModel.FK_Game_User" FromRole="Game" ToRole="User" />
+          <NavigationProperty Name="GameUsers" Relationship="ducklabdbModel.FK_GameUser_Game" FromRole="Game" ToRole="GameUser" />
+          <NavigationProperty Name="UserStocks" Relationship="ducklabdbModel.FK_UserStock_Game" FromRole="Game" ToRole="UserStock" />
+        </EntityType>
+        <EntityType Name="GameUser">
+          <Key>
+            <PropertyRef Name="gameUserId" />
+          </Key>
+          <Property Name="gameUserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="gameId" Type="Int32" Nullable="false" />
+          <Property Name="userId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Game" Relationship="ducklabdbModel.FK_GameUser_Game" FromRole="GameUser" ToRole="Game" />
+          <NavigationProperty Name="User" Relationship="ducklabdbModel.FK_GameUser_User" FromRole="GameUser" ToRole="User" />
+        </EntityType>
+        <EntityType Name="UserStock">
+          <Key>
+            <PropertyRef Name="userStockId" />
+          </Key>
+          <Property Name="userStockId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userId" Type="Int32" Nullable="false" />
+          <Property Name="gameId" Type="Int32" Nullable="false" />
+          <Property Name="companyId" Type="Int32" Nullable="false" />
+          <Property Name="timePurchased" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Company" Relationship="ducklabdbModel.FK_UserStock_Company" FromRole="UserStock" ToRole="Company" />
+          <NavigationProperty Name="Game" Relationship="ducklabdbModel.FK_UserStock_Game" FromRole="UserStock" ToRole="Game" />
+          <NavigationProperty Name="User" Relationship="ducklabdbModel.FK_UserStock_User" FromRole="UserStock" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_CompanyStock_Company">
+          <End Type="ducklabdbModel.Company" Role="Company" Multiplicity="1" />
+          <End Type="ducklabdbModel.CompanyStock" Role="CompanyStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Company">
+              <PropertyRef Name="companyID" />
+            </Principal>
+            <Dependent Role="CompanyStock">
+              <PropertyRef Name="companyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserStock_Company">
+          <End Type="ducklabdbModel.Company" Role="Company" Multiplicity="1" />
+          <End Type="ducklabdbModel.UserStock" Role="UserStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Company">
+              <PropertyRef Name="companyID" />
+            </Principal>
+            <Dependent Role="UserStock">
+              <PropertyRef Name="companyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Game_User">
+          <End Type="ducklabdbModel.User" Role="User" Multiplicity="1" />
+          <End Type="ducklabdbModel.Game" Role="Game" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="Game">
+              <PropertyRef Name="adminId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GameUser_Game">
+          <End Type="ducklabdbModel.Game" Role="Game" Multiplicity="1" />
+          <End Type="ducklabdbModel.GameUser" Role="GameUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="gameId" />
+            </Principal>
+            <Dependent Role="GameUser">
+              <PropertyRef Name="gameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserStock_Game">
+          <End Type="ducklabdbModel.Game" Role="Game" Multiplicity="1" />
+          <End Type="ducklabdbModel.UserStock" Role="UserStock" Multiplicity="*" >
+          </End>
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="gameId" />
+            </Principal>
+            <Dependent Role="UserStock">
+              <PropertyRef Name="gameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GameUser_User">
+          <End Type="ducklabdbModel.User" Role="User" Multiplicity="1" />
+          <End Type="ducklabdbModel.GameUser" Role="GameUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="GameUser">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserStock_User">
+          <End Type="ducklabdbModel.User" Role="User" Multiplicity="1" />
+          <End Type="ducklabdbModel.UserStock" Role="UserStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="UserStock">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ducklabdbModelStoreContainer" CdmEntityContainer="ducklabdbEntities">
+          <EntitySetMapping Name="Companies">
+            <EntityTypeMapping TypeName="ducklabdbModel.Company">
+              <MappingFragment StoreEntitySet="Company">
+                <ScalarProperty Name="companyID" ColumnName="companyID" />
+                <ScalarProperty Name="companyName" ColumnName="companyName" />
+                <ScalarProperty Name="companySymbol" ColumnName="companySymbol" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="ducklabdbModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="firstName" ColumnName="firstName" />
+                <ScalarProperty Name="lastName" ColumnName="lastName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CompanyStocks">
+            <EntityTypeMapping TypeName="ducklabdbModel.CompanyStock">
+              <MappingFragment StoreEntitySet="CompanyStock">
+                <ScalarProperty Name="isOpen" ColumnName="isOpen" />
+                <ScalarProperty Name="stockPrice" ColumnName="stockPrice" />
+                <ScalarProperty Name="stockTime" ColumnName="stockTime" />
+                <ScalarProperty Name="companyId" ColumnName="companyId" />
+                <ScalarProperty Name="companyStockId" ColumnName="companyStockId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Games">
+            <EntityTypeMapping TypeName="ducklabdbModel.Game">
+              <MappingFragment StoreEntitySet="Game">
+                <ScalarProperty Name="gameStatus" ColumnName="gameStatus" />
+                <ScalarProperty Name="adminId" ColumnName="adminId" />
+                <ScalarProperty Name="gameName" ColumnName="gameName" />
+                <ScalarProperty Name="gameTypeId" ColumnName="gameTypeId" />
+                <ScalarProperty Name="gameId" ColumnName="gameId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GameUsers">
+            <EntityTypeMapping TypeName="ducklabdbModel.GameUser">
+              <MappingFragment StoreEntitySet="GameUser">
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="gameId" ColumnName="gameId" />
+                <ScalarProperty Name="gameUserId" ColumnName="gameUserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserStocks">
+            <EntityTypeMapping TypeName="ducklabdbModel.UserStock">
+              <MappingFragment StoreEntitySet="UserStock">
+                <ScalarProperty Name="timePurchased" ColumnName="timePurchased" />
+                <ScalarProperty Name="companyId" ColumnName="companyId" />
+                <ScalarProperty Name="gameId" ColumnName="gameId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="userStockId" ColumnName="userStockId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

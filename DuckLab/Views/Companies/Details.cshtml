@@ -1,0 +1,77 @@
+﻿@model DuckLab.Models.Company
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<script src="~/Scripts/canvasjs.min.js"></script>
+<script src="~/Scripts/canvasjs.react.js"></script>
+<script src="~/Scripts/jquery.canvasjs.min.js"></script>
+@{
+    System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    var dataPoints = Model.CompanyStocks.Select(stock => new { label = stock.stockTime.Value.ToShortDateString(), y = stock.stockPrice }).ToList();
+    var dataPointsString = Html.Raw(serializer.Serialize(dataPoints));
+}
+
+<script>
+    window.onload = function () {
+        var dataPoints = @dataPointsString;
+            var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            theme: "light2",
+            title: {
+            text: "Stock Prices"
+            },
+            axisX: {
+            title: "Date"
+            },
+            axisY: {
+            title:"Price($)",
+                includeZero: false
+            },
+            data: [{
+            type: "line",
+                dataPoints: dataPoints
+            }]
+        });
+        chart.render();
+    }
+</script>
+
+<h2>Details</h2>
+
+<div>
+    <h4>Company</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.companyName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.companyName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.companySymbol)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.companySymbol)
+        </dd>
+        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+        @foreach (DuckLab.Models.CompanyStock stockPrice in Model.CompanyStocks)
+        {
+            <div class="row">
+                <div class="col-md-3"><p>Date: @stockPrice.stockTime</p></div>
+                <div class="col-md-3"><p>Price: $@stockPrice.stockPrice</p></div>
+            </div>
+        }
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.companyID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
