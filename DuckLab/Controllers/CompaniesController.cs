@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using DuckLab.Models;
 using EntityState = System.Data.Entity.EntityState;
 
-namespace DuckLab.Controllers///ytf
+namespace DuckLab.Controllers
 {
     public class CompaniesController : Controller
     {
