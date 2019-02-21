@@ -1,0 +1,84 @@
+﻿@model IEnumerable<DuckLab.Models.Company>
+
+@{
+    int startPage;
+    int curPage = ViewBag.page;
+    int endPage;
+    int numPages;
+    if (ViewBag.pageCount > 10)
+    {
+        numPages = 10;
+    }
+    else
+    {
+        numPages = ViewBag.PageCount;
+    }
+    if(curPage < 5)
+    {
+        startPage = 1;
+    }
+    else
+    {
+        startPage = curPage - 5;
+    }
+    if(startPage + 10 > numPages)
+    {
+        endPage = numPages;
+    }
+    else
+    {
+        endPage = startPage + 10; 
+    }
+}
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Symbol</th>
+                <th scope="col">Price</th>
+                <th scope="col"></th>
+            </tr>
+            <tr>
+                <th scope="col"><input type="text" name="name" class="form-control" placeholder="Name" value="@ViewBag.name" /></th>
+                <th scope="col"><input type="text" name="symbol" class="form-control" placeholder="Symbol" value="@ViewBag.symbol" /></th>
+                <th scope="col"><input type="hidden" name="lastPage" value="@ViewBag.page" /></th>
+                <th scope="col"><input type="submit" name="page" class="btn btn-primary" value="Search" /></th>
+            </tr>
+        </thead>
+        <tbody id="Companies">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.companyName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.companySymbol)</td>
+                    <td>$</td>
+                    <td><button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Details", new { id = item.companyID })'">Stock Info</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="row" style="text-align:center">
+    <div class="col-lg-3" ></div>
+    <div class="col-lg-6" >
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="First group" style="text-align:center">
+                <input type="submit" name="page" class="btn btn-secondary" value="<" @(curPage == 1 ? "disabled":"") />
+                @for (int i = startPage; i < endPage; i++)
+                {
+                    if (i == curPage)
+                    {
+                        <input type="submit" name="page" class="btn btn-primary" value="@i"/>
+                    }
+                    else
+                    {
+                        <input type="submit" name="page" class="btn btn-secondary" value="@i" />
+                    }
+                }
+                <input type="submit" name="page" class="btn btn-secondary" value=">" @(curPage == endPage ? "disabled":"") />
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3"></div>
+</div>

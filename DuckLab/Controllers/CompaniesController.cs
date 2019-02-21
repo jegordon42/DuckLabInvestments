@@ -8,20 +8,48 @@ using System.Web;
 using System.Web.Mvc;
 using DuckLab.Models;
 using EntityState = System.Data.Entity.EntityState;
+using System.Net.Http;
+using System.Net.Http.Headers;
+
 
 namespace DuckLab.Controllers
 {
     public class CompaniesController : Controller
     {
         private ducklabdbEntities db = new ducklabdbEntities();
+        public static string baseURL = "https://api.iextrading.com/1.0/";
 
-        // GET: Companies
         public ActionResult Index()
         {
-            return View(db.Companies.Take(10).ToList());
+            return View();
+            
         }
 
-        // GET: Companies/Details/5
+        public PartialViewResult _Companies(string name = "", string symbol = "", int lastPage = 0,  string page = "")
+        {
+            int numPage;
+            if (page == "" || page == "Search")
+                numPage = 1;
+            else if (page == "<")
+                numPage = lastPage - 1;
+            else if (page == ">")
+                numPage = lastPage + 1;
+            else
+                numPage = Convert.ToInt32(page);
+
+            ViewBag.page = numPage;
+            ViewBag.name = name;
+            ViewBag.symbol = symbol;
+            ViewBag.pageCount = db.Companies.Where(x => x.companyName.StartsWith(name) && x.companySymbol.StartsWith(symbol)).Count();
+            if(ViewBag.pageCount % 25 == 0)
+                ViewBag.pageCount = ViewBag.pageCount / 25;
+            else
+                ViewBag.pageCount = (ViewBag.pageCount / 25) + 1;
+
+            numPage--;
+            return PartialView(db.Companies.Where(x => x.companyName.StartsWith(name) && x.companySymbol.StartsWith(symbol)).OrderBy(x => x.companyName).Skip(numPage * 25).Take(25).ToList());
+        }
+
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -36,83 +64,50 @@ namespace DuckLab.Controllers
             return View(company);
         }
 
-        // GET: Companies/Create
-        public ActionResult Create()
+        public RedirectToRouteResult GetCompanies()
         {
-            return View();
-        }
-
-        // POST: Companies/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "companyID,companyName,companySymbol")] Company company)
-        {
-            if (ModelState.IsValid)
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(baseURL + "ref-data/symbols");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpResponseMessage response = client.GetAsync("").Result;
+            if (response.IsSuccessStatusCode)
             {
-                db.Companies.Add(company);
+                string strResponse = response.Content.ReadAsStringAsync().Result;
+                while (strResponse.IndexOf("symbol") != -1)
+                {
+                    string symbol = "";
+                    int index = strResponse.IndexOf("symbol") + 9;
+                    for (; strResponse[index] != '"'; index++)
+                    {
+                        symbol = symbol + strResponse[index];
+                    }
+
+                    string companyName = "";
+                    index = strResponse.IndexOf("name") + 7;
+                    for (; strResponse[index] != '"'; index++)
+                    {
+                        companyName = companyName + strResponse[index];
+                    }
+
+                    if(!db.Companies.Where(x => x.companySymbol == symbol).Any())
+                    {
+                        Company newCompany = new Company();
+                        newCompany.companyName = companyName;
+                        newCompany.companySymbol = symbol;
+                        db.Companies.Add(newCompany);
+                        db.Entry(newCompany).State = EntityState.Added;
+                    }
+
+                    strResponse = strResponse.Substring(index);
+                }
                 db.SaveChanges();
-                return RedirectToAction("Index");
+            }
+            else
+            {
+                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
             }
 
-            return View(company);
-        }
-
-        // GET: Companies/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Company company = db.Companies.Find(id);
-            if (company == null)
-            {
-                return HttpNotFound();
-            }
-            return View(company);
-        }
-
-        // POST: Companies/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "companyID,companyName,companySymbol")] Company company)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(company).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(company);
-        }
-
-        // GET: Companies/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Company company = db.Companies.Find(id);
-            if (company == null)
-            {
-                return HttpNotFound();
-            }
-            return View(company);
-        }
-
-        // POST: Companies/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Company company = db.Companies.Find(id);
-            db.Companies.Remove(company);
-            db.SaveChanges();
+            client.Dispose();
             return RedirectToAction("Index");
         }
 
