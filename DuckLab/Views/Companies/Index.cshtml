@@ -1,39 +1,17 @@
 ﻿@model IEnumerable<DuckLab.Models.Company>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Companies";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.companyName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.companySymbol)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.companyName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.companySymbol)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.companyID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.companyID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.companyID })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="container">
+    <div class="row" style="text-align:center">
+        <h1>Companies</h1>
+    </div>
+    @using (Ajax.BeginForm("_Companies", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Companies", InsertionMode = InsertionMode.Replace })                                                        )
+    {
+        <div id="Companies">
+            @Html.Action("_Companies")
+        </div>           
+    }
+</div>
