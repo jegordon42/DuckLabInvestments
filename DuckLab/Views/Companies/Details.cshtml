@@ -37,42 +37,32 @@
         chart.render();
     }
 </script>
-
-<h2>Details</h2>
-
-<div>
-    <h4>Company</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.companyName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.companyName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.companySymbol)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.companySymbol)
-        </dd>
-        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
-        @foreach (DuckLab.Models.CompanyStock stockPrice in Model.CompanyStocks)
-        {
-            <div class="row">
-                <div class="col-md-3"><p>Date: @stockPrice.stockTime</p></div>
-                <div class="col-md-3"><p>Price: $@stockPrice.stockPrice</p></div>
-            </div>
-        }
-
-    </dl>
+<div class="container">
+    <h2>@Model.companyName</h2>
+    <h4>@Model.companySymbol</h4>
+    <div class="row">
+        <div class="col-lg-6">
+            <button type="button" style="margin-top:20px" class="btn btn-success" onclick="window.location.href='@Url.Action("GetStockPriceByCompanyID", new { companyId = Model.companyID})'">Get Todays Stock Price</button>
+            <table class="table">
+                <tr>
+                    <td>Date</td>
+                    <td>Price</td>
+                </tr>
+                @foreach (DuckLab.Models.CompanyStock stockPrice in Model.CompanyStocks.OrderByDescending(x=> x.stockTime))
+                {
+                    <tr>
+                        <td>@stockPrice.stockTime</td>
+                        <td>$@stockPrice.stockPrice</td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <div class="col-lg-6">
+            <div id="chartContainer" style="height:370px; width: 100%"></div>
+        </div>
+    </div>
 </div>
 <p>
-    @Html.ActionLink("Get Stock Price", "GetStockPriceByCompanyID", new { companyId = Model.companyID }) |
-    @Html.ActionLink("Edit", "Edit", new { id = Model.companyID }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back", "Index")
 </p>
 

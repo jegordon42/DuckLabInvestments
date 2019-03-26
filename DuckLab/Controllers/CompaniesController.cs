@@ -182,7 +182,7 @@ namespace DuckLab.Controllers
             }
 
             client.Dispose();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { id = companyId });
         }
 
         protected override void Dispose(bool disposing)
