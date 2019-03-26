@@ -47,7 +47,7 @@ namespace DuckLab.Controllers
             int userId = Convert.ToInt32(Session["userId"]);
             ViewBag.availableBalance = db.GameUsers.Where(x => x.gameId == gameid && x.userId == userId).Select(x => x.availableBalance).First() ?? 0;
             ViewBag.game = db.Games.Find(gameid);
-            return View(db.UserStocks.Where(x => x.userId == Convert.ToInt32(Session["userId"]) && x.gameId == gameid).ToList());
+            return View(db.UserStocks.Where(x => x.userId == userId && x.gameId == gameid).ToList());
         }
 
         public ActionResult Buy(int gameId)
