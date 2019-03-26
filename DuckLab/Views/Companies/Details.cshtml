@@ -71,6 +71,7 @@
     </dl>
 </div>
 <p>
+    @Html.ActionLink("Get Stock Price", "GetStockPriceByCompanyID", new { companyId = Model.companyID }) |
     @Html.ActionLink("Edit", "Edit", new { id = Model.companyID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

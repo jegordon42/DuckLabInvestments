@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "sell Stock";
+}
+
+<h2>Sell @ViewBag.companyName for @ViewBag.gameName</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <div class="form-group">
+        <div class="col-md-3">
+            <h4>Stock Price: $@ViewBag.stockPrice</h4>
+        </div>
+        <div class="col-md-5">
+            <h4>Available Balance: $@ViewBag.availableBalance</h4>
+        </div>
+        <div class="col-md-4">
+            <h4>Stock Owned: @ViewBag.stocksOwned shares</h4>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-8">
+            <h4 style="color:red">@ViewBag.error</h4>
+        </div>
+    </div>
+    <hr />
+    <div class="form-group">
+        <div class="col-md-3">
+            <label>Stock Selling Quantity</label>
+        </div>
+        <div class="col-md-3">
+            <input type="hidden" name="gameId" value="@ViewBag.gameId" />
+            <input type="hidden" name="companyId" value="@ViewBag.companyId" />
+            <input type="text" name="quantity" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <input type="submit" class="btn btn-success" value="Sell" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

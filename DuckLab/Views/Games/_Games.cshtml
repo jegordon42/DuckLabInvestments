@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DuckLab.Models.Company>
+﻿@model IEnumerable<DuckLab.Models.Game>
 
 @{
     int startPage;
@@ -35,22 +35,23 @@
         <thead>
             <tr>
                 <th scope="col">Name</th>
-                <th scope="col">Symbol</th>
-                <th scope="col"><input type="hidden" name="lastPage" value="@ViewBag.page" /></th>
+                <th scope="col">Type</th>
+                <th scope="col"><button type="button" class="btn btn-success" onclick="window.location.href='@Url.Action("Create")'">Create Game</button>
+                <input type="hidden" name="lastPage" value="@ViewBag.page" /></th>
             </tr>
             <tr>
-                <th scope="col"><input type="text" name="name" class="form-control" placeholder="Name" value="@ViewBag.name" /></th>
-                <th scope="col"><input type="text" name="symbol" class="form-control" placeholder="Symbol" value="@ViewBag.symbol" /></th>
+                <th scope="col"><input type="text" name="gameName" class="form-control" placeholder="Name" value="@ViewBag.gameName" /></th>
+                <th scope="col"><input type="text" name="gameType" class="form-control" placeholder="Type" value="@ViewBag.gameType" /></th>
                 <th scope="col"><input type="submit" name="page" class="btn btn-primary" value="Search" /></th>
             </tr>
         </thead>
-        <tbody id="Companies">
+        <tbody id="Games">
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => item.companyName)</td>
-                    <td>@Html.DisplayFor(modelItem => item.companySymbol)</td>
-                    <td><button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Details", new { id = item.companyID })'">Stock Info</button></td>
+                    <td>@Html.DisplayFor(modelItem => item.gameName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.gameType)</td>
+                    <td><button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Details", new { id = item.gameId })'">Game Info</button></td>
                 </tr>
             }
         </tbody>

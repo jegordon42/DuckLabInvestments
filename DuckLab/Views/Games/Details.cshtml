@@ -1,0 +1,42 @@
+﻿@model DuckLab.ViewModels.GameViewModel
+
+@{
+    ViewBag.Title = "Details";
+
+}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h2>@Html.DisplayFor(model => model.game.gameName)</h2>
+            <h4>Game Type: @Model.game.gameType <br />Starting Balance $@Model.game.startingBalance</h4>
+            
+        </div>
+        <div class="col-lg-6">
+            @if (ViewBag.joined == false)
+            {
+                <button type="button" style="margin-top:20px" class="btn btn-success" onclick="window.location.href='@Url.Action("Join", new { gameId = Model.game.gameId})'">Join Game</button>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <h3>LeaderBoard</h3>
+
+            <table class="table">
+                @{int count = 1; }
+                @foreach (DuckLab.ViewModels.Player player in Model.Players.OrderByDescending(x => x.gameBalance))
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@player.name</td>
+                        <td>$@player.gameBalance</td>
+                    </tr>
+                    count++;
+                }
+            </table>
+            <p> @Html.ActionLink("Back", "Index")</p>
+        </div>
+        <div class="col-lg-8"></div>
+    </div>
+</div>
+

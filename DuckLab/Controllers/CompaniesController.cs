@@ -22,22 +22,10 @@ namespace DuckLab.Controllers
         public ActionResult Index()
         {
             return View();
-            
         }
 
         public PartialViewResult _Companies(string name = "", string symbol = "", int lastPage = 0,  string page = "")
         {
-            int numPage;
-            if (page == "" || page == "Search")
-                numPage = 1;
-            else if (page == "<")
-                numPage = lastPage - 1;
-            else if (page == ">")
-                numPage = lastPage + 1;
-            else
-                numPage = Convert.ToInt32(page);
-
-            ViewBag.page = numPage;
             ViewBag.name = name;
             ViewBag.symbol = symbol;
             ViewBag.pageCount = db.Companies.Where(x => x.companyName.StartsWith(name) && x.companySymbol.StartsWith(symbol)).Count();
@@ -46,7 +34,22 @@ namespace DuckLab.Controllers
             else
                 ViewBag.pageCount = (ViewBag.pageCount / 25) + 1;
 
+            int numPage;
+            if (page == "" || page == "Search")
+                numPage = 1;
+            else if (page == "<")
+                numPage = lastPage - 1;
+            else if (page == "<<")
+                numPage = 1;
+            else if (page == ">>")
+                numPage = ViewBag.pageCount;
+            else if (page == ">")
+                numPage = lastPage + 1;
+            else
+                numPage = Convert.ToInt32(page);
+            ViewBag.page = numPage;
             numPage--;
+
             return PartialView(db.Companies.Where(x => x.companyName.StartsWith(name) && x.companySymbol.StartsWith(symbol)).OrderBy(x => x.companyName).Skip(numPage * 25).Take(25).ToList());
         }
 
@@ -100,6 +103,77 @@ namespace DuckLab.Controllers
 
                     strResponse = strResponse.Substring(index);
                 }
+                db.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+            }
+
+            client.Dispose();
+            return RedirectToAction("Index");
+        }
+
+        public RedirectToRouteResult GetStockPrices()
+        {
+            List<int> allCompanyIds = db.Companies.Select(x => x.companyID).ToList();
+
+            foreach (int companyId in allCompanyIds)
+                GetStockPriceByCompanyID(companyId);
+
+            return RedirectToAction("Index");
+        }
+
+        public RedirectToRouteResult GetStockPriceByCompanyID(int companyId)
+        {
+            Company company = db.Companies.Find(companyId);
+            if(company.CompanyStocks.Where(x => x.stockTime.Value.Date == DateTime.Now.Date).Any())
+                return RedirectToAction("Index");
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(baseURL + "stock/" + company.companySymbol + "/quote");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpResponseMessage response = client.GetAsync("").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string strResponse = response.Content.ReadAsStringAsync().Result;
+                
+                string strOpenPrice = "";
+                int index = strResponse.IndexOf(",\"openTime\"") - 1;
+                for (; Char.IsDigit(strResponse[index]) || strResponse[index] == '.'; index--)
+                {
+                    strOpenPrice = strResponse[index] + strOpenPrice;
+                }
+                decimal openPrice;
+                if (!Decimal.TryParse(strOpenPrice, out openPrice))
+                    openPrice = -1;
+
+
+                string strClosePrice = "";
+                index = strResponse.IndexOf(",\"closeTime\"") - 1;
+                for (; Char.IsDigit(strResponse[index]) || strResponse[index] == '.'; index--)
+                {
+                    strClosePrice = strResponse[index] + strClosePrice;
+                }
+                decimal closePrice;
+                if (!Decimal.TryParse(strOpenPrice, out closePrice))
+                    closePrice = -1;
+
+                CompanyStock stockOpenPrice = new CompanyStock();
+                stockOpenPrice.companyId = companyId;
+                stockOpenPrice.stockTime = DateTime.Now;
+                stockOpenPrice.stockPrice = openPrice;
+                stockOpenPrice.isOpen = true;
+                db.CompanyStocks.Add(stockOpenPrice);
+                db.Entry(stockOpenPrice).State = EntityState.Added;
+
+                CompanyStock stockClosePrice = new CompanyStock();
+                stockClosePrice.companyId = companyId;
+                stockClosePrice.stockTime = DateTime.Now;
+                stockClosePrice.stockPrice = closePrice;
+                stockClosePrice.isOpen = false;
+                db.CompanyStocks.Add(stockClosePrice);
+                db.Entry(stockClosePrice).State = EntityState.Added;
+
                 db.SaveChanges();
             }
             else

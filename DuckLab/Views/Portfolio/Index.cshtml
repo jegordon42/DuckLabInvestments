@@ -1,0 +1,32 @@
+﻿@model IEnumerable<DuckLab.ViewModels.GameViewModel>
+
+@{
+    ViewBag.Title = "Portfolio";
+}
+
+<div class="container">
+    <div class="row" style="text-align:center">
+        <h1>Portfolio</h1>
+    </div>
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Game</th>
+                    <th scope="col">My Balance</th>
+                    <th scope="col"><input type="hidden" name="lastPage" value="@ViewBag.page" /></th>
+                </tr>
+            </thead>
+            <tbody id="Games">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.game.gameName)</td>
+                        <td>$@Html.DisplayFor(modelItem => item.Players.First().gameBalance)</td>
+                        <td><button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Manage", new { gameid = item.game.gameId })'">Manage</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

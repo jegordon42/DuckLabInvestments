@@ -20,7 +20,7 @@
           <Property Name="companyStockId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="companyId" Type="int" Nullable="false" />
           <Property Name="stockTime" Type="datetime" />
-          <Property Name="stockPrice" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="stockPrice" Type="decimal" Precision="18" Scale="2" />
           <Property Name="isOpen" Type="bit" />
         </EntityType>
         <EntityType Name="Game">
@@ -28,10 +28,11 @@
             <PropertyRef Name="gameId" />
           </Key>
           <Property Name="gameId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="gameTypeId" Type="int" />
+          <Property Name="gameType" Type="varchar" MaxLength="100" />
           <Property Name="gameName" Type="varchar" MaxLength="200" />
           <Property Name="adminId" Type="int" Nullable="false" />
           <Property Name="gameStatus" Type="nchar" MaxLength="10" />
+          <Property Name="startingBalance" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="GameUser">
           <Key>
@@ -40,6 +41,7 @@
           <Property Name="gameUserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="gameId" Type="int" Nullable="false" />
           <Property Name="userId" Type="int" Nullable="false" />
+          <Property Name="availableBalance" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -48,6 +50,10 @@
           <Property Name="userID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="firstName" Type="varchar" MaxLength="50" />
           <Property Name="lastName" Type="varchar" MaxLength="50" />
+          <Property Name="username" Type="varchar" MaxLength="50" />
+          <Property Name="password" Type="varchar" MaxLength="50" />
+          <Property Name="email" Type="varchar" MaxLength="50" />
+          <Property Name="active" Type="bit" />
         </EntityType>
         <EntityType Name="UserStock">
           <Key>
@@ -58,6 +64,7 @@
           <Property Name="gameId" Type="int" Nullable="false" />
           <Property Name="companyId" Type="int" Nullable="false" />
           <Property Name="timePurchased" Type="datetime" />
+          <Property Name="quantityPurchased" Type="int" />
         </EntityType>
         <Association Name="FK_CompanyStock_Company">
           <End Role="Company" Type="Self.Company" Multiplicity="1" />
@@ -203,6 +210,10 @@
           <NavigationProperty Name="Games" Relationship="ducklabdbModel.FK_Game_User" FromRole="User" ToRole="Game" />
           <NavigationProperty Name="GameUsers" Relationship="ducklabdbModel.FK_GameUser_User" FromRole="User" ToRole="GameUser" />
           <NavigationProperty Name="UserStocks" Relationship="ducklabdbModel.FK_UserStock_User" FromRole="User" ToRole="UserStock" />
+          <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="active" Type="Boolean" />
         </EntityType>
         <EntityContainer Name="ducklabdbEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Companies" EntityType="Self.Company" />
@@ -247,7 +258,7 @@
           <Property Name="companyStockId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="companyId" Type="Int32" Nullable="false" />
           <Property Name="stockTime" Type="DateTime" Precision="3" />
-          <Property Name="stockPrice" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="stockPrice" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="isOpen" Type="Boolean" />
           <NavigationProperty Name="Company" Relationship="ducklabdbModel.FK_CompanyStock_Company" FromRole="CompanyStock" ToRole="Company" />
         </EntityType>
@@ -256,13 +267,14 @@
             <PropertyRef Name="gameId" />
           </Key>
           <Property Name="gameId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="gameTypeId" Type="Int32" />
           <Property Name="gameName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="adminId" Type="Int32" Nullable="false" />
           <Property Name="gameStatus" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
           <NavigationProperty Name="User" Relationship="ducklabdbModel.FK_Game_User" FromRole="Game" ToRole="User" />
           <NavigationProperty Name="GameUsers" Relationship="ducklabdbModel.FK_GameUser_Game" FromRole="Game" ToRole="GameUser" />
           <NavigationProperty Name="UserStocks" Relationship="ducklabdbModel.FK_UserStock_Game" FromRole="Game" ToRole="UserStock" />
+          <Property Name="gameType" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="startingBalance" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="GameUser">
           <Key>
@@ -273,6 +285,7 @@
           <Property Name="userId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Game" Relationship="ducklabdbModel.FK_GameUser_Game" FromRole="GameUser" ToRole="Game" />
           <NavigationProperty Name="User" Relationship="ducklabdbModel.FK_GameUser_User" FromRole="GameUser" ToRole="User" />
+          <Property Name="availableBalance" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="UserStock">
           <Key>
@@ -286,6 +299,7 @@
           <NavigationProperty Name="Company" Relationship="ducklabdbModel.FK_UserStock_Company" FromRole="UserStock" ToRole="Company" />
           <NavigationProperty Name="Game" Relationship="ducklabdbModel.FK_UserStock_Game" FromRole="UserStock" ToRole="Game" />
           <NavigationProperty Name="User" Relationship="ducklabdbModel.FK_UserStock_User" FromRole="UserStock" ToRole="User" />
+          <Property Name="quantityPurchased" Type="Int32" />
         </EntityType>
         <Association Name="FK_CompanyStock_Company">
           <End Type="ducklabdbModel.Company" Role="Company" Multiplicity="1" />
@@ -390,6 +404,10 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="ducklabdbModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="active" ColumnName="active" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="username" ColumnName="username" />
                 <ScalarProperty Name="userID" ColumnName="userID" />
                 <ScalarProperty Name="firstName" ColumnName="firstName" />
                 <ScalarProperty Name="lastName" ColumnName="lastName" />
@@ -410,10 +428,11 @@
           <EntitySetMapping Name="Games">
             <EntityTypeMapping TypeName="ducklabdbModel.Game">
               <MappingFragment StoreEntitySet="Game">
+                <ScalarProperty Name="startingBalance" ColumnName="startingBalance" />
+                <ScalarProperty Name="gameType" ColumnName="gameType" />
                 <ScalarProperty Name="gameStatus" ColumnName="gameStatus" />
                 <ScalarProperty Name="adminId" ColumnName="adminId" />
                 <ScalarProperty Name="gameName" ColumnName="gameName" />
-                <ScalarProperty Name="gameTypeId" ColumnName="gameTypeId" />
                 <ScalarProperty Name="gameId" ColumnName="gameId" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -421,6 +440,7 @@
           <EntitySetMapping Name="GameUsers">
             <EntityTypeMapping TypeName="ducklabdbModel.GameUser">
               <MappingFragment StoreEntitySet="GameUser">
+                <ScalarProperty Name="availableBalance" ColumnName="availableBalance" />
                 <ScalarProperty Name="userId" ColumnName="userId" />
                 <ScalarProperty Name="gameId" ColumnName="gameId" />
                 <ScalarProperty Name="gameUserId" ColumnName="gameUserId" />
@@ -430,6 +450,7 @@
           <EntitySetMapping Name="UserStocks">
             <EntityTypeMapping TypeName="ducklabdbModel.UserStock">
               <MappingFragment StoreEntitySet="UserStock">
+                <ScalarProperty Name="quantityPurchased" ColumnName="quantityPurchased" />
                 <ScalarProperty Name="timePurchased" ColumnName="timePurchased" />
                 <ScalarProperty Name="companyId" ColumnName="companyId" />
                 <ScalarProperty Name="gameId" ColumnName="gameId" />

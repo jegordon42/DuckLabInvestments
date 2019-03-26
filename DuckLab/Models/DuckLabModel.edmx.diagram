@@ -4,13 +4,13 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="d2114bb5b9ef425aae8869def4f810d8" Name="Diagram1" ZoomLevel="62">
+      <Diagram DiagramId="d2114bb5b9ef425aae8869def4f810d8" Name="Diagram1" ZoomLevel="93">
         <EntityTypeShape EntityType="ducklabdbModel.Company" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ducklabdbModel.User" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ducklabdbModel.CompanyStock" Width="1.5" PointX="3" PointY="9.5" />
-        <EntityTypeShape EntityType="ducklabdbModel.Game" Width="1.5" PointX="5" PointY="6" />
-        <EntityTypeShape EntityType="ducklabdbModel.GameUser" Width="1.5" PointX="7.25" PointY="4" />
-        <EntityTypeShape EntityType="ducklabdbModel.UserStock" Width="1.5" PointX="7.25" PointY="0.75" />
+        <EntityTypeShape EntityType="ducklabdbModel.CompanyStock" Width="1.5" PointX="0.875" PointY="4.25" />
+        <EntityTypeShape EntityType="ducklabdbModel.Game" Width="1.5" PointX="2.875" PointY="4.375" />
+        <EntityTypeShape EntityType="ducklabdbModel.GameUser" Width="1.5" PointX="4.875" PointY="3.125" />
+        <EntityTypeShape EntityType="ducklabdbModel.UserStock" Width="1.5" PointX="6.875" PointY="0.875" />
         <AssociationConnector Association="ducklabdbModel.FK_CompanyStock_Company" />
         <AssociationConnector Association="ducklabdbModel.FK_UserStock_Company" />
         <AssociationConnector Association="ducklabdbModel.FK_Game_User" />

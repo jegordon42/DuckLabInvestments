@@ -1,18 +1,17 @@
 ﻿@model IEnumerable<DuckLab.Models.Company>
 
 @{
-    ViewBag.Title = "Companies";
+    ViewBag.Title = "Buy Stock";
 }
 
 <div class="container">
     <div class="row" style="text-align:center">
-        <h1>Companies</h1>
-        <h3>@Html.ActionLink("Get Today's Stock Prices", "GetStockPrices")</h3>
+        <h1>Buy Stock</h1>
     </div>
     @using (Ajax.BeginForm("_Companies", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Companies", InsertionMode = InsertionMode.Replace })                                                        )
     {
         <div id="Companies">
-            @Html.Action("_Companies")
+            @Html.Action("_Companies", new {gameId = ViewBag.gameId })
         </div>           
     }
 </div>

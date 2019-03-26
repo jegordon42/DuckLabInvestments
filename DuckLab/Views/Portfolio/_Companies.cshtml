@@ -36,7 +36,7 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Symbol</th>
-                <th scope="col"><input type="hidden" name="lastPage" value="@ViewBag.page" /></th>
+                <th scope="col"><input type="hidden" name="lastPage" value="@ViewBag.page" /><input type="hidden" name="gameId" value="@ViewBag.gameId" /></th>
             </tr>
             <tr>
                 <th scope="col"><input type="text" name="name" class="form-control" placeholder="Name" value="@ViewBag.name" /></th>
@@ -50,7 +50,7 @@
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.companyName)</td>
                     <td>@Html.DisplayFor(modelItem => item.companySymbol)</td>
-                    <td><button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Details", new { id = item.companyID })'">Stock Info</button></td>
+                    <td><button type="button" class="btn btn-success" onclick="window.location.href='@Url.Action("BuyStock", new { gameId = ViewBag.gameId, companyId = item.companyID })'">Buy</button></td>
                 </tr>
             }
         </tbody>

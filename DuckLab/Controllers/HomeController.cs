@@ -17,6 +17,8 @@ namespace DuckLab.Controllers
         
         public ActionResult Index()
         {
+            if (Session["userId"] != null)
+                ViewBag.name = db.Users.Find(Convert.ToInt32(Session["userId"])).firstName;
             return View();
         }
 

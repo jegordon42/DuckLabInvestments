@@ -1,0 +1,53 @@
+﻿@model IEnumerable<DuckLab.Models.UserStock>
+
+@{
+    ViewBag.Title = "Manage";
+}
+
+<div class="container">
+    <div class="row" style="text-align:center">
+        <h1>Manage @ViewBag.game.gameName Stock</h1>
+    </div>
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Company</th>
+                    <th scope="col">Stock Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col"><button type="button" class="btn btn-success" onclick="window.location.href='@Url.Action("Buy", new {gameId = ViewBag.game.gameId  })'">Buy</button></th>
+                </tr>
+            </thead>
+            @{ decimal total = ViewBag.availableBalance;}
+            <tbody id="Games">
+                <tr>
+                    <td>Leftover Capital</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>$@ViewBag.availableBalance</td>
+                    <td></td>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    decimal stockPrice = item.Company.CompanyStocks.OrderByDescending(x => x.stockTime).Select(x => x.stockPrice).First() ?? 0;
+                    total += ((item.quantityPurchased ?? 0) * stockPrice);
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Company.companyName)</td>
+                        <td>$@stockPrice</td>
+                        <td>@Html.DisplayFor(modelItem => item.quantityPurchased)</td>
+                        <td>$@(item.quantityPurchased * stockPrice)</td>
+                        <td><button type="button" class="btn btn-danger" onclick="window.location.href='@Url.Action("SellStock", new { gameId = item.gameId, companyid = item.companyId })'">Sell</button></td>
+                    </tr>
+                }
+                <tr>
+                    <td><b>Total</b></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><b>$@total</b></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

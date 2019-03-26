@@ -17,6 +17,7 @@ namespace DuckLab.Models
         public int gameUserId { get; set; }
         public int gameId { get; set; }
         public int userId { get; set; }
+        public Nullable<decimal> availableBalance { get; set; }
     
         public virtual Game Game { get; set; }
         public virtual User User { get; set; }

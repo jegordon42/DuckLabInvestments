@@ -1,0 +1,17 @@
+﻿@model IEnumerable<DuckLab.Models.Company>
+
+@{
+    ViewBag.Title = "Games";
+}
+
+<div class="container">
+    <div class="row" style="text-align:center">
+        <h1>Games</h1>
+    </div>
+    @using (Ajax.BeginForm("_Games", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Games", InsertionMode = InsertionMode.Replace })                                                        )
+    {
+        <div id="Games">
+            @Html.Action("_Games")
+        </div>           
+    }
+</div>

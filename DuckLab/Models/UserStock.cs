@@ -19,6 +19,7 @@ namespace DuckLab.Models
         public int gameId { get; set; }
         public int companyId { get; set; }
         public Nullable<System.DateTime> timePurchased { get; set; }
+        public Nullable<int> quantityPurchased { get; set; }
     
         public virtual Company Company { get; set; }
         public virtual Game Game { get; set; }
