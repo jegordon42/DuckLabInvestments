@@ -26,8 +26,25 @@
     <div class="form-group">
         <label class="control-label col-md-2">Game Type</label>
         <div class="col-md-10">
-            @Html.EditorFor(model => model.gameType, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.gameType, "", new { @class = "text-danger" })
+            <select name="gameType" id="gameType" class="form-control" onchange="myFunction()">
+                <option value="Timed">Timed</option>
+                <option value="Profit Goal">Profit Goal</option>
+                <option value="Practice">Practice</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group" id="endDate">
+        <label class="control-label col-md-2">End Date</label>
+        <div class="col-md-10">
+            <input type="date" class="form-control" name="endDate" />
+        </div>
+    </div>
+
+    <div class="form-group" id="profitGoal" style="display:none">
+        <label class="control-label col-md-2">Profit Goal</label>
+        <div class="col-md-10">
+            <input type="number" class="form-control" name="profitGoal" />
         </div>
     </div>
 
@@ -51,6 +68,23 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
+<script>
+    function myFunction() {
+        var type = document.getElementById("gameType").value;
+        if (type == "Timed") {
+            document.getElementById("endDate").style.display = "block";
+            document.getElementById("profitGoal").style.display = "none";
+        }
+        if (type == "Profit Goal") {
+            document.getElementById("endDate").style.display = "none";
+            document.getElementById("profitGoal").style.display = "block";
+        }
+        if (type == "Practice") {
+            document.getElementById("endDate").style.display = "none";
+            document.getElementById("profitGoal").style.display = "none";
+        }
+    }
+</script>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

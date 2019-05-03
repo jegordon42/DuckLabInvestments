@@ -20,11 +20,18 @@
             <tbody id="Games">
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.game.gameName)</td>
-                        <td>$@Html.DisplayFor(modelItem => item.Players.First().gameBalance)</td>
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.game.gameName)</td>
+                    <td>$@Html.DisplayFor(modelItem => item.Players.First().gameBalance)</td>
+                    @if (item.game.gameStatus.Trim() == "Finished")
+                    {
+                        <td><button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Details","Games", new { id = item.game.gameId })'">View Results</button></td>
+                    }
+                    else
+                    {
                         <td><button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Manage", new { gameid = item.game.gameId })'">Manage</button></td>
-                    </tr>
+                    }
+                </tr>
                 }
             </tbody>
         </table>

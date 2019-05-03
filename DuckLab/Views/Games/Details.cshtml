@@ -8,11 +8,46 @@
     <div class="row">
         <div class="col-lg-6">
             <h2>@Html.DisplayFor(model => model.game.gameName)</h2>
-            <h4>Game Type: @Model.game.gameType <br />Starting Balance $@Model.game.startingBalance</h4>
-            
+            <h4>Game Type: @Model.game.gameType</h4>
+            <h4>Starting Balance $@Model.game.startingBalance</h4>
+            @if (Model.game.gameStatus.Trim() == "Active")
+            {
+                if (Model.game.gameType == "Timed")
+                {
+                    <h4>Game will end on @String.Format("{0: dddd MMMM dd, yyyy}", Model.game.endDate)</h4>
+                }
+                else if (Model.game.gameType == "Profit Goal")
+                {
+                    <h4>Game will end when someone reaches $@Model.game.profitGoal</h4>
+                }
+                else
+                {
+                    <h4>Continue to buy and sell stocks for however long you like!</h4>
+                }
+            }
+            else
+            {
+                if (Model.game.gameType == "Timed")
+                {
+                    <h4>Game ended on @String.Format("{0: dddd MMMM dd, yyyy}", Model.game.endDate)</h4>
+                }
+                else if (Model.game.gameType == "Profit Goal")
+                {
+                    <h4>Game ended when someone reached $@Model.game.profitGoal</h4>
+                }
+                else
+                {
+                    <h4>Continue to buy and sell stocks for however long you like!</h4>
+                }
+
+                <h2>@ViewBag.winningPlayer has won!</h2>
+            }
+
+
+
         </div>
         <div class="col-lg-6">
-            @if (ViewBag.joined == false)
+            @if (ViewBag.joined == false && Model.game.gameStatus != "Finished")
             {
                 <button type="button" style="margin-top:20px" class="btn btn-success" onclick="window.location.href='@Url.Action("Join", new { gameId = Model.game.gameId})'">Join Game</button>
             }
@@ -34,7 +69,6 @@
                     count++;
                 }
             </table>
-            <p> @Html.ActionLink("Back", "Index")</p>
         </div>
         <div class="col-lg-8"></div>
     </div>

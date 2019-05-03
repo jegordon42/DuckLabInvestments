@@ -36,12 +36,14 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Type</th>
+                <th scope="col">Status</th>
                 <th scope="col"><button type="button" class="btn btn-success" onclick="window.location.href='@Url.Action("Create")'">Create Game</button>
                 <input type="hidden" name="lastPage" value="@ViewBag.page" /></th>
             </tr>
             <tr>
                 <th scope="col"><input type="text" name="gameName" class="form-control" placeholder="Name" value="@ViewBag.gameName" /></th>
                 <th scope="col"><input type="text" name="gameType" class="form-control" placeholder="Type" value="@ViewBag.gameType" /></th>
+                <th></th>
                 <th scope="col"><input type="submit" name="page" class="btn btn-primary" value="Search" /></th>
             </tr>
         </thead>
@@ -51,6 +53,7 @@
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.gameName)</td>
                     <td>@Html.DisplayFor(modelItem => item.gameType)</td>
+                    <td>@Html.DisplayFor(modelItem => item.gameStatus)</td>
                     <td><button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Details", new { id = item.gameId })'">Game Info</button></td>
                 </tr>
             }

@@ -21,6 +21,9 @@ namespace DuckLab.Controllers
 
         public ActionResult Index()
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             List<GameViewModel> games = new List<GameViewModel>();
             foreach(Game game in db.GameUsers.Where(x => x.userId == userId).Select(x => x.Game))
@@ -44,6 +47,9 @@ namespace DuckLab.Controllers
 
         public ActionResult Manage(int gameid)
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             ViewBag.availableBalance = db.GameUsers.Where(x => x.gameId == gameid && x.userId == userId).Select(x => x.availableBalance).First() ?? 0;
             ViewBag.game = db.Games.Find(gameid);
@@ -52,12 +58,18 @@ namespace DuckLab.Controllers
 
         public ActionResult Buy(int gameId)
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             ViewBag.gameId = gameId;
             return View();
         }
 
         public ActionResult SellStock(int gameId, int companyId, string error = "")
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             ViewBag.availableBalance = db.GameUsers.Where(x => x.gameId == gameId && x.userId == userId).First().availableBalance ?? 0;
             ViewBag.stockPrice = db.CompanyStocks.Where(x => x.companyId == companyId).OrderByDescending(x => x.stockTime).Select(x => x.stockPrice).First();
@@ -72,6 +84,9 @@ namespace DuckLab.Controllers
 
         public ActionResult BuyStock(int gameId, int companyId, string error = "")
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             ViewBag.availableBalance = db.GameUsers.Where(x => x.gameId == gameId && x.userId == userId).First().availableBalance ?? 0;
             ViewBag.stockPrice = db.CompanyStocks.Where(x => x.companyId == companyId).OrderByDescending(x => x.stockTime).Select(x => x.stockPrice).First();
@@ -88,6 +103,9 @@ namespace DuckLab.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SellStock(int gameId, int companyId, int quantity)
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             decimal stockPrice = db.CompanyStocks.Where(x => x.companyId == companyId).OrderByDescending(x => x.stockTime).First().stockPrice ?? 0;
             decimal totalPrice = stockPrice * quantity;
@@ -119,6 +137,9 @@ namespace DuckLab.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult BuyStock(int gameId, int companyId, int quantity)
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             decimal stockPrice = db.CompanyStocks.Where(x => x.companyId == companyId).OrderByDescending(x => x.stockTime).First().stockPrice ?? 0;
             GameUser player = db.GameUsers.Where(x => x.userId == userId && x.gameId == gameId).First();

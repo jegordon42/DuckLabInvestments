@@ -21,6 +21,9 @@ namespace DuckLab.Controllers
 
         public ActionResult Index()
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             return View();
         }
 
@@ -55,6 +58,9 @@ namespace DuckLab.Controllers
 
         public ActionResult Details(int? id)
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -147,17 +153,6 @@ namespace DuckLab.Controllers
                 if (!Decimal.TryParse(strOpenPrice, out openPrice))
                     openPrice = -1;
 
-
-                string strClosePrice = "";
-                index = strResponse.IndexOf(",\"closeTime\"") - 1;
-                for (; Char.IsDigit(strResponse[index]) || strResponse[index] == '.'; index--)
-                {
-                    strClosePrice = strResponse[index] + strClosePrice;
-                }
-                decimal closePrice;
-                if (!Decimal.TryParse(strOpenPrice, out closePrice))
-                    closePrice = -1;
-
                 CompanyStock stockOpenPrice = new CompanyStock();
                 stockOpenPrice.companyId = companyId;
                 stockOpenPrice.stockTime = DateTime.Now;
@@ -165,14 +160,6 @@ namespace DuckLab.Controllers
                 stockOpenPrice.isOpen = true;
                 db.CompanyStocks.Add(stockOpenPrice);
                 db.Entry(stockOpenPrice).State = EntityState.Added;
-
-                CompanyStock stockClosePrice = new CompanyStock();
-                stockClosePrice.companyId = companyId;
-                stockClosePrice.stockTime = DateTime.Now;
-                stockClosePrice.stockPrice = closePrice;
-                stockClosePrice.isOpen = false;
-                db.CompanyStocks.Add(stockClosePrice);
-                db.Entry(stockClosePrice).State = EntityState.Added;
 
                 db.SaveChanges();
             }

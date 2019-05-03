@@ -33,6 +33,8 @@
           <Property Name="adminId" Type="int" Nullable="false" />
           <Property Name="gameStatus" Type="nchar" MaxLength="10" />
           <Property Name="startingBalance" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="endDate" Type="datetime" />
+          <Property Name="profitGoal" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="GameUser">
           <Key>
@@ -275,6 +277,8 @@
           <NavigationProperty Name="UserStocks" Relationship="ducklabdbModel.FK_UserStock_Game" FromRole="Game" ToRole="UserStock" />
           <Property Name="gameType" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="startingBalance" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="endDate" Type="DateTime" Precision="3" />
+          <Property Name="profitGoal" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="GameUser">
           <Key>
@@ -428,6 +432,8 @@
           <EntitySetMapping Name="Games">
             <EntityTypeMapping TypeName="ducklabdbModel.Game">
               <MappingFragment StoreEntitySet="Game">
+                <ScalarProperty Name="profitGoal" ColumnName="profitGoal" />
+                <ScalarProperty Name="endDate" ColumnName="endDate" />
                 <ScalarProperty Name="startingBalance" ColumnName="startingBalance" />
                 <ScalarProperty Name="gameType" ColumnName="gameType" />
                 <ScalarProperty Name="gameStatus" ColumnName="gameStatus" />

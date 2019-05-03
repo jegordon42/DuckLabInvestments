@@ -20,6 +20,9 @@ namespace DuckLab.Controllers
 
         public ActionResult Index()
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             return View();
             
         }
@@ -34,9 +37,12 @@ namespace DuckLab.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Game game)
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             game.adminId = userId;
-            game.gameStatus = "New";
+            game.gameStatus = "Active";
             if (ModelState.IsValid)
             {
                 db.Games.Add(game);
@@ -88,6 +94,9 @@ namespace DuckLab.Controllers
 
         public ActionResult Details(int? id)
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             if (id == null)
             {
@@ -115,11 +124,41 @@ namespace DuckLab.Controllers
                 }
                 theGame.Players.Add(player);
             }
+
+            DuckLab.ViewModels.Player winningPlayer = theGame.Players.OrderByDescending(x => x.gameBalance).First();
+            ViewBag.winningPlayer = winningPlayer.name;
+
+            if (game.gameStatus.Trim() == "Active")
+            {
+                if (game.gameType == "Timed")
+                {
+                    if (game.endDate < DateTime.Now)
+                    {
+                        game.gameStatus = "Finished";
+                        db.Entry(game).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+                else if (game.gameType == "Profit Goal")
+                {
+                    if ((double) game.profitGoal < winningPlayer.gameBalance)
+                    {
+                        game.gameStatus = "Finished";
+                        db.Entry(game).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+            }
+            
+
             return View(theGame);
         }
 
         public ActionResult Join(int gameId)
         {
+            if (Session["userId"] == null)
+                return RedirectToAction("Login", "Users");
+
             int userId = Convert.ToInt32(Session["userId"]);
             GameUser player = new GameUser();
             player.gameId = gameId;

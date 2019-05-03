@@ -211,6 +211,7 @@
     <Content Include="Models\DuckLabModel.edmx.diagram">
       <DependentUpon>DuckLabModel.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\DuckLabInvestments - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\canvasjs.min.js" />
     <Content Include="Scripts\canvasjs.react.js" />
@@ -257,6 +258,7 @@
     <Content Include="Views\Portfolio\_Companies.cshtml" />
     <Content Include="Views\Portfolio\BuyStock.cshtml" />
     <Content Include="Views\Portfolio\SellStock.cshtml" />
+    <Content Include="Views\Home\Training.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

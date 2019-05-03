@@ -26,6 +26,8 @@ namespace DuckLab.Models
         public string gameStatus { get; set; }
         public string gameType { get; set; }
         public Nullable<decimal> startingBalance { get; set; }
+        public Nullable<System.DateTime> endDate { get; set; }
+        public Nullable<decimal> profitGoal { get; set; }
     
         public virtual User User { get; set; }
         public virtual ICollection<GameUser> GameUsers { get; set; }
